@@ -30,7 +30,7 @@
 import { ref } from 'vue';
 
 export default {
-    name: "Register",
+    name: "Login",
     setup() {
 
         const email = ref(null);
