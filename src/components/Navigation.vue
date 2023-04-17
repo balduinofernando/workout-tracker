@@ -9,9 +9,9 @@
 
             <ul class="flex flex-1 justify-end gap-x-10">
                 <router-link class="cursor-pointer" :to="{ name: 'Home' }">Home</router-link>
-                <router-link class="cursor-pointer" :to="{ name: 'Create' }">Create</router-link>
-                <router-link class="cursor-pointer" :to="{ name: 'Login' }">Login</router-link>
-                <li class="cursor-pointer">Logout</li>
+                <router-link class="cursor-pointer" v-if="user" :to="{ name: 'Create' }">Create</router-link>
+                <router-link class="cursor-pointer" v-if="!user" :to="{ name: 'Login' }">Login</router-link>
+                <li class="cursor-pointer" @click="logout" v-if="user">Logout</li>
             </ul>
 
         </nav>
@@ -21,9 +21,23 @@
 <script setup>
 import { defineComponent } from 'vue'
 import { RouterLink } from 'vue-router'
-import Home from '../views/Home.vue';
-
+import { supabase } from '../supabase/init';
+import { useRouter } from 'vue-router';
+import { computed, onMounted } from 'vue'
+import authStore from '../stores/auth';
 defineComponent({
     RouterLink
 })
+const router = useRouter();
+
+// Get User
+const user = computed(() => authStore.state.user)
+
+//Logout 
+const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) { console.log("Erro ao fazer logout", error); }
+
+    router.push({ name: 'Login' });
+}
 </script>
