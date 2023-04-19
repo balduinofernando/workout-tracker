@@ -1,16 +1,21 @@
-# workout-tracker
+# Workout Tracker
 
-This template should help get you started developing with Vue 3 in Vite.
+This app was done following the Tutorial from Brad Traversy's guest John Kormanick. [Watch Here](https://www.youtube.com/watch?v=3tF0fGkd4ho)
+
+My main goal is to learn the BaaS (Backend As a Service)  **SupaBase**. 
 
 ## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [Vue 3](https://vuejs.org/) With [Vite](https://vitejs.dev/)
 
 ## Project Setup
+
+**Clone This Repo**
+
+``` sh
+git clone https://github.com/balduinofernando/workout-tracker.git
+```
 
 ```sh
 npm install
@@ -29,6 +34,8 @@ npm run build
 ```
 
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+No testes Were Written, but to run it just run the following into the terminal 
 
 ```sh
 npm run test:unit
