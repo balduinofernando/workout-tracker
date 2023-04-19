@@ -9,12 +9,12 @@
         <!--Create-->
         <div class="p-8 flex items-start bg-light-grey rounded-md shadow-lg">
             <!--Form-->
-            <form class="flex flex-col gap-y-5 w-full">
-                <h1 class="text-2xl text-at-light-green">Adicione Exercício</h1>
+            <form class="flex flex-col gap-y-5 w-full" @submit.prevent="createWorkout">
+                <h1 class="text-2xl text-at-light-green">Adicione Treino</h1>
 
                 <!--Workout Name-->
                 <div class="flex flex-col">
-                    <label for="workout-name" class="mb-1 text-sm text-at-light-green">Nome do Exercício</label>
+                    <label for="workout-name" class="mb-1 text-sm text-at-light-green">Nome do Treino</label>
                     <input type="text" required class="p-2 rounded-sm text-gray-500 focus:outline-none"
                         v-model="workoutName" id="workout-name" />
 
@@ -22,9 +22,9 @@
 
                 <!--Workout Type-->
                 <div class="flex flex-col">
-                    <label for="workout-type" class="mb-1 text-sm text-at-light-green">Modelo de Exercício</label>
+                    <label for="workout-type" class="mb-1 text-sm text-at-light-green">Modelo de Treino</label>
                     <select id="workout-type" required class="p-2 rounded-sm bg-white text-gray-500 focus:outline-none"
-                        v-model="workoutType">
+                        v-model="workoutType" @change="workoutChange">
                         <option value="select-workout">Seleccione o Tipo de Treinamento</option>
                         <option value="strength">Treinamento de Força</option>
                         <option value="cardio">Cardio</option>
@@ -64,12 +64,12 @@
                                 v-model="item.weight">
                         </div>
 
-                        <img src="@/assets/images/trash-light-green.png" class="h-4 w-auto absolute -left-5 cursor-pointer"
-                            alt="Trash Icon" />
+                        <img src="@/assets/images/trash-light-green.png" @click="deleteExercise(item.id)"
+                            class="h-4 w-auto absolute -left-5 cursor-pointer" alt="Trash Icon" />
 
 
                     </div>
-                    <button type="button"
+                    <button type="button" @click="addExercise"
                         class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-at-light-green duration-200 border-solid border-2 border-transparent hover:border-at-light-green hover:bg-white hover:text-at-light-green">Adicionar
                     </button>
                 </div>
@@ -111,39 +111,113 @@
                                 v-model="item.pace">
                         </div>
 
-                        <img src="@/assets/images/trash-light-green.png" class="h-4 w-auto absolute -left-5 cursor-pointer"
-                            alt="Trash Icon" />
+                        <img @click="deleteExercise(item.id)" src="@/assets/images/trash-light-green.png"
+                            class="h-4 w-auto absolute -left-5 cursor-pointer" alt="Trash Icon" />
 
 
                     </div>
-                    <button type="button"
+                    <button type="button" @click="addExercise"
                         class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-at-light-green duration-200 border-solid border-2 border-transparent hover:border-at-light-green hover:bg-white hover:text-at-light-green">Adicionar</button>
                 </div>
 
-                <button type="button" v-if="workoutType !== 'select-workout'"
+                <button type="submit" v-if="workoutType !== 'select-workout'"
                     class="mt-6 py-2 px-6 rounded-sm self-start text-sm text-white bg-at-light-green duration-200 border-solid border-2 border-transparent hover:border-at-light-green hover:bg-white hover:text-at-light-green">
-                    Gravar Exercício</button>
+                    Gravar Treino</button>
             </form>
         </div>
     </div>
 </template>
 <script setup>
-
 import { ref } from 'vue'
+import { uid } from 'uid'
+import { supabase } from '../supabase/init'
+
 /*Create Data */
 const workoutName = ref('');
 const workoutType = ref("select-workout");
-const exercises = ref();
+const exercises = ref([]);
 const statusMessage = ref(null);
 const errorMsg = ref(null);
 
 // Add Exercise
+const addExercise = () => {
+    if (workoutType === 'strength') {
+        exercises.value.push({
+            id: uid(),
+            exercise: '',
+            sets: '',
+            reps: '',
+            weight: ''
+        });
+
+        return;
+    }
+
+    exercises.value.push({
+        id: uid(),
+        cardioType: '',
+        distance: '',
+        duration: '',
+        pace: ''
+    })
+
+}
 
 /* Delete Exercise */
+const deleteExercise = (id) => {
+    if (exercises.value.length > 1) {
+        exercises.value = exercises.value.filter(exercise => exercise.id !== id)
+        return;
+    }
+
+    errorMsg.value = "Erro: Não Pode remover todos, precisa pelo menos um exercício";
+    setTimeout(() => {
+        errorMsg.value = false;
+    }, 5000)
+}
 
 // Listem for changing of workout type input
 
-// Create Workout
+const workoutChange = () => {
+    exercises.value = [];
+    addExercise();
+}
 
+// Create Workout
+const createWorkout = async () => {
+
+    try {
+        const { data, error } = await supabase.from('workouts').insert([
+            {
+                workoutName: workoutName.value,
+                workoutType: workoutType.value,
+                exercises: exercises.value,
+            },
+        ]);
+
+        if (error) throw error;
+
+        // Flash Message
+        statusMessage.value = "Sucesso: Treino Adicionado";
+
+        // Reset Fields
+        workoutName.value = null;
+        workoutType.value = 'select-workout';
+        exercises.value = [];
+
+        // Clear Flash Message
+        setTimeout(() => {
+            statusMessage.value = false;
+        }, 5000);
+
+    } catch (error) {
+        errorMsg.value = `Erro: ${error.message}`;
+
+        setTimeout(() => {
+            errorMsg.value = false;
+        }, 5000);
+    }
+
+}
 
 </script>
