@@ -2,7 +2,7 @@
 
 This app was done following the Tutorial from Brad Traversy's guest John Kormanick. [Watch Here](https://www.youtube.com/watch?v=3tF0fGkd4ho)
 
-## My main goal was to learn the BaaS (Backend As a Service)  **### SupaBase**. 
+## My main goal was to learn the BaaS (Backend As a Service)  **SupaBase**. 
 
 ## Recommended IDE Setup
 
